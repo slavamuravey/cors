@@ -8,7 +8,7 @@ type eventDispatcher struct {
 
 func (ed *eventDispatcher) dispatch(e *event, eventName string) {
 	for _, l := range ed.listeners[eventName] {
-		if e.propagationStopped {
+		if e.isPropagationStopped() {
 			break
 		}
 

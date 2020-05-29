@@ -3,31 +3,31 @@ package cors
 import "net/http"
 
 const (
-  SimpleRequestEvent    string = "simple"
-  PreflightRequestEvent string = "preflight"
+	SimpleRequestEvent    string = "simple"
+	PreflightRequestEvent string = "preflight"
 )
 
 type event struct {
-  c                  Config
-  w                  http.ResponseWriter
-  r                  *http.Request
-  next               http.Handler
-  propagationStopped bool
-  forwardedToNext    bool
+	c                  Config
+	w                  http.ResponseWriter
+	r                  *http.Request
+	next               http.Handler
+	propagationStopped bool
+	forwardedToNext    bool
 }
 
 func (e *event) stopPropagation() {
-  e.propagationStopped = true
+	e.propagationStopped = true
 }
 
 func (e *event) isPropagationStopped() bool {
-  return e.propagationStopped
+	return e.propagationStopped
 }
 
 func (e *event) forwardToNext() {
-  e.forwardedToNext = true
+	e.forwardedToNext = true
 }
 
 func (e *event) isForwardedToNext() bool {
-  return e.forwardedToNext
+	return e.forwardedToNext
 }

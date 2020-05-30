@@ -13,7 +13,7 @@ func applyNext(e *event, ed *eventDispatcher) {
 
 func applyPreflightTermination(e *event, ed *eventDispatcher) {
   if e.c.ContinuousPreflight {
-	return
+    return
   }
 
   e.stopPropagation()
@@ -24,40 +24,40 @@ func applyPreflightTermination(e *event, ed *eventDispatcher) {
 
 func applyExposedHeaders(e *event, ed *eventDispatcher) {
   if len(e.c.ExposedHeaders) > 0 {
-	e.w.Header().Set(ExposeHeadersHeader, strings.Join(e.c.ExposedHeaders, ", "))
+    e.w.Header().Set(ExposeHeadersHeader, strings.Join(e.c.ExposedHeaders, ", "))
   }
 }
 
 func applyMaxAge(e *event, ed *eventDispatcher) {
   if e.c.MaxAge > 0 {
-	e.w.Header().Set(MaxAgeHeader, strconv.Itoa(e.c.MaxAge))
+    e.w.Header().Set(MaxAgeHeader, strconv.Itoa(e.c.MaxAge))
   }
 }
 
 func applyAllowCredentials(e *event, ed *eventDispatcher) {
   if e.c.AllowCredentials {
-	e.w.Header().Set(AllowCredentialsHeader, "true")
+    e.w.Header().Set(AllowCredentialsHeader, "true")
   }
 }
 
 func applyAllowOrigin(e *event, ed *eventDispatcher) {
   if e.c.AllowOrigin == "" || e.c.AllowOrigin == "*" {
-	e.w.Header().Add(VaryHeader, OriginHeader)
-	e.w.Header().Set(AllowOriginHeader, "*")
+    e.w.Header().Add(VaryHeader, OriginHeader)
+    e.w.Header().Set(AllowOriginHeader, "*")
 
-	return
+    return
   }
 
   origin := e.r.Header.Get(OriginHeader)
   match, err := regexp.MatchString(e.c.AllowOrigin, origin)
 
   if err != nil {
-	return
+    return
   }
 
   if match {
-	e.w.Header().Add(VaryHeader, OriginHeader)
-	e.w.Header().Set(AllowOriginHeader, origin)
+    e.w.Header().Add(VaryHeader, OriginHeader)
+    e.w.Header().Set(AllowOriginHeader, origin)
   }
 }
 
@@ -79,16 +79,16 @@ func checkRequestIsCors(e *event, ed *eventDispatcher) {
   host := e.r.Host
 
   if origin == "" || origin == "http://"+host || origin == "https://"+host {
-	e.forwardToNext()
+    e.forwardToNext()
   }
 }
 
 func nextForwarder(l listener) listener {
   return func(e *event, ed *eventDispatcher) {
-	if e.isForwardedToNext() {
-	  return
-	}
+    if e.isForwardedToNext() {
+      return
+    }
 
-	l(e, ed)
+    l(e, ed)
   }
 }

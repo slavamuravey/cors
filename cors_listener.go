@@ -115,7 +115,7 @@ func ApplyAllowHeaders(e *Event, ed *EventDispatcher) {
 
       if !contains(h, e.C.AllowHeaders) {
         e.W.WriteHeader(http.StatusBadRequest)
-        e.W.Write([]byte("Unauthorized header "+h))
+        e.W.Write([]byte("Unauthorized header " + h))
         e.terminateRequest()
         e.stopPropagation()
 

@@ -3,31 +3,41 @@ package cors
 import "net/http"
 
 const (
-  SimpleRequestEvent    string = "simple"
-  PreflightRequestEvent string = "preflight"
+  SimpleRequestEvent = string(iota)
+  PreflightRequestEvent
+  CorsRequestEvent
+  RequestEvent
 )
 
-type event struct {
-  c                  Config
-  w                  http.ResponseWriter
-  r                  *http.Request
-  next               http.Handler
+type Event struct {
+  C                  Config
+  W                  http.ResponseWriter
+  R                  *http.Request
   propagationStopped bool
-  forwardedToNext    bool
+  requestTerminated  bool
 }
 
-func (e *event) stopPropagation() {
+func NewEvent(c Config, w http.ResponseWriter, r *http.Request) *Event {
+  e := new(Event)
+  e.C = c
+  e.W = w
+  e.R = r
+
+  return e
+}
+
+func (e *Event) stopPropagation() {
   e.propagationStopped = true
 }
 
-func (e *event) isPropagationStopped() bool {
+func (e *Event) isPropagationStopped() bool {
   return e.propagationStopped
 }
 
-func (e *event) forwardToNext() {
-  e.forwardedToNext = true
+func (e *Event) terminateRequest() {
+  e.requestTerminated = true
 }
 
-func (e *event) isForwardedToNext() bool {
-  return e.forwardedToNext
+func (e *Event) isRequestTerminated() bool {
+  return e.requestTerminated
 }

@@ -4,51 +4,30 @@ import (
   "net/http"
 )
 
-type Config struct {
-  ContinuousPreflight bool
-  AllowOrigin         string
-  AllowMethods        []string
-  AllowHeaders        []string
-  AllowCredentials    bool
-  ExposedHeaders      []string
-  MaxAge              int
-}
-
 func CreateHandlerFunc(c Config) func(http.Handler) http.HandlerFunc {
   return func(next http.Handler) http.HandlerFunc {
     return func(w http.ResponseWriter, r *http.Request) {
-      ed := new(eventDispatcher)
-      ed.listeners = map[string][]listener{}
-      ed.addListener(PreflightRequestEvent, nextForwarder(checkRequestIsCors))
-      ed.addListener(PreflightRequestEvent, nextForwarder(applyAllowOrigin))
-      ed.addListener(PreflightRequestEvent, nextForwarder(applyAllowCredentials))
-      ed.addListener(PreflightRequestEvent, nextForwarder(applyAllowMethods))
-      ed.addListener(PreflightRequestEvent, nextForwarder(applyAllowHeaders))
-      ed.addListener(PreflightRequestEvent, nextForwarder(applyMaxAge))
-      ed.addListener(PreflightRequestEvent, nextForwarder(applyPreflightTermination))
-      ed.addListener(PreflightRequestEvent, applyNext)
+      ed := NewEventDispatcher()
 
-      ed.addListener(SimpleRequestEvent, nextForwarder(checkRequestIsCors))
-      ed.addListener(SimpleRequestEvent, nextForwarder(applyAllowOrigin))
-      ed.addListener(SimpleRequestEvent, nextForwarder(applyAllowCredentials))
-      ed.addListener(SimpleRequestEvent, nextForwarder(applyExposedHeaders))
-      ed.addListener(SimpleRequestEvent, applyNext)
+      ed.addListener(RequestEvent, CheckRequestIsCors)
+      ed.addListener(RequestEvent, func(e *Event, ed *EventDispatcher) {
+        next.ServeHTTP(w, r)
+      })
 
-      e := new(event)
-      e.w = w
-      e.r = r
-      e.c = c
-      e.next = next
+      ed.addListener(CorsRequestEvent, HandleCorsRequest)
 
-      if isPreflightRequest(r) {
-        ed.dispatch(e, PreflightRequestEvent)
-      } else {
-        ed.dispatch(e, SimpleRequestEvent)
-      }
+      ed.addListener(PreflightRequestEvent, ApplyAllowOrigin)
+      ed.addListener(PreflightRequestEvent, ApplyAllowCredentials)
+      ed.addListener(PreflightRequestEvent, ApplyAllowMethods)
+      ed.addListener(PreflightRequestEvent, ApplyAllowHeaders)
+      ed.addListener(PreflightRequestEvent, ApplyMaxAge)
+      ed.addListener(PreflightRequestEvent, ApplyPreflightTermination)
+
+      ed.addListener(SimpleRequestEvent, ApplyAllowOrigin)
+      ed.addListener(SimpleRequestEvent, ApplyAllowCredentials)
+      ed.addListener(SimpleRequestEvent, ApplyExposedHeaders)
+
+      ed.dispatch(NewEvent(c, w, r), RequestEvent)
     }
   }
-}
-
-func isPreflightRequest(r *http.Request) bool {
-  return r.Method == http.MethodOptions && r.Header.Get(RequestMethodHeader) != ""
 }

@@ -12,8 +12,8 @@ func ApplyPreflightTermination(e *Event, ed *EventDispatcher) {
     return
   }
 
-  e.terminateRequest()
-  e.stopPropagation()
+  e.TerminateRequest()
+  e.StopPropagation()
 
   e.W.WriteHeader(http.StatusOK)
 }
@@ -45,7 +45,7 @@ func ApplyAllowOrigin(e *Event, ed *EventDispatcher) {
   }
 
   if e.C.AllowOriginPattern == "" {
-    e.stopPropagation()
+    e.StopPropagation()
 
     return
   }
@@ -55,8 +55,8 @@ func ApplyAllowOrigin(e *Event, ed *EventDispatcher) {
 
   if err != nil {
     e.W.WriteHeader(http.StatusInternalServerError)
-    e.stopPropagation()
-    e.terminateRequest()
+    e.StopPropagation()
+    e.TerminateRequest()
 
     return
   }
@@ -72,8 +72,8 @@ func ApplyAllowMethods(e *Event, ed *EventDispatcher) {
 
   if !contains(strings.ToUpper(method), e.C.AllowMethods) {
     e.W.WriteHeader(http.StatusMethodNotAllowed)
-    e.terminateRequest()
-    e.stopPropagation()
+    e.TerminateRequest()
+    e.StopPropagation()
 
     return
   }
@@ -116,8 +116,8 @@ func ApplyAllowHeaders(e *Event, ed *EventDispatcher) {
       if !contains(h, e.C.AllowHeaders) {
         e.W.WriteHeader(http.StatusBadRequest)
         e.W.Write([]byte("Unauthorized header " + h))
-        e.terminateRequest()
-        e.stopPropagation()
+        e.TerminateRequest()
+        e.StopPropagation()
 
         return
       }
@@ -136,8 +136,8 @@ func CheckRequestIsCors(e *Event, ed *EventDispatcher) {
   corsRequestEvent := NewEvent(e.C, e.W, e.R)
   ed.dispatch(corsRequestEvent, CorsRequestEvent)
 
-  if corsRequestEvent.isRequestTerminated() {
-    e.stopPropagation()
+  if corsRequestEvent.IsRequestTerminated() {
+    e.StopPropagation()
   }
 }
 

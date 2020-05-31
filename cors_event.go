@@ -3,10 +3,10 @@ package cors
 import "net/http"
 
 const (
-  SimpleRequestEvent = string(iota)
+  CorsRequestEvent = string(iota)
   PreflightRequestEvent
-  CorsRequestEvent
   RequestEvent
+  SimpleRequestEvent
 )
 
 type Event struct {
@@ -26,18 +26,18 @@ func NewEvent(c Config, w http.ResponseWriter, r *http.Request) *Event {
   return e
 }
 
-func (e *Event) stopPropagation() {
+func (e *Event) StopPropagation() {
   e.propagationStopped = true
 }
 
-func (e *Event) isPropagationStopped() bool {
+func (e *Event) IsPropagationStopped() bool {
   return e.propagationStopped
 }
 
-func (e *Event) terminateRequest() {
+func (e *Event) TerminateRequest() {
   e.requestTerminated = true
 }
 
-func (e *Event) isRequestTerminated() bool {
+func (e *Event) IsRequestTerminated() bool {
   return e.requestTerminated
 }

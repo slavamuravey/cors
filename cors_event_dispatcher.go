@@ -1,21 +1,21 @@
 package cors
 
-type listener func(*Event, *EventDispatcher)
+type Listener func(*Event, *EventDispatcher)
 
 type EventDispatcher struct {
-  listeners map[string][]listener
+  listeners map[string][]Listener
 }
 
 func NewEventDispatcher() *EventDispatcher {
   ed := new(EventDispatcher)
-  ed.listeners = map[string][]listener{}
+  ed.listeners = map[string][]Listener{}
 
   return ed
 }
 
 func (ed *EventDispatcher) dispatch(e *Event, eventName string) {
   for _, l := range ed.listeners[eventName] {
-    if e.isPropagationStopped() {
+    if e.IsPropagationStopped() {
       break
     }
 
@@ -23,6 +23,6 @@ func (ed *EventDispatcher) dispatch(e *Event, eventName string) {
   }
 }
 
-func (ed *EventDispatcher) addListener(eventName string, l listener) {
+func (ed *EventDispatcher) addListener(eventName string, l Listener) {
   ed.listeners[eventName] = append(ed.listeners[eventName], l)
 }

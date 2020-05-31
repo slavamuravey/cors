@@ -1,13 +1,13 @@
 package cors
 
 type Config struct {
-  ContinuousPreflight bool
-  AllowOriginPattern  string
-  AllowAllOrigin      bool
-  AllowMethods        []string
-  AllowHeaders        []string
   AllowAllHeaders     bool
+  AllowAllOrigin      bool
   AllowCredentials    bool
+  AllowHeaders        []string
+  AllowMethods        []string
+  AllowOriginPattern  string
+  ContinuousPreflight bool
   ExposedHeaders      []string
   MaxAge              int
 }

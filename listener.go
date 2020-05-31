@@ -15,7 +15,14 @@ func handlePreflightTermination(e *event, ed *eventDispatcher) {
   e.terminateRequest()
   e.stopPropagation()
 
-  e.w.WriteHeader(http.StatusOK)
+  var status int
+  if e.c.PreflightTerminationStatus == 0 {
+    status = http.StatusOK
+  } else {
+    status = e.c.PreflightTerminationStatus
+  }
+
+  e.w.WriteHeader(status)
 }
 
 func handleExposedHeaders(e *event, ed *eventDispatcher) {

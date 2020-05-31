@@ -7,7 +7,7 @@ import (
   "strings"
 )
 
-func applyPreflightTermination(e *event, ed *eventDispatcher) {
+func handlePreflightTermination(e *event, ed *eventDispatcher) {
   if e.c.ContinuousPreflight {
     return
   }
@@ -18,25 +18,25 @@ func applyPreflightTermination(e *event, ed *eventDispatcher) {
   e.w.WriteHeader(http.StatusOK)
 }
 
-func applyExposedHeaders(e *event, ed *eventDispatcher) {
+func handleExposedHeaders(e *event, ed *eventDispatcher) {
   if len(e.c.ExposedHeaders) > 0 {
     e.w.Header().Set(ExposeHeadersHeader, strings.Join(e.c.ExposedHeaders, ", "))
   }
 }
 
-func applyMaxAge(e *event, ed *eventDispatcher) {
+func handleMaxAge(e *event, ed *eventDispatcher) {
   if e.c.MaxAge > 0 {
     e.w.Header().Set(MaxAgeHeader, strconv.Itoa(e.c.MaxAge))
   }
 }
 
-func applyAllowCredentials(e *event, ed *eventDispatcher) {
+func handleAllowCredentials(e *event, ed *eventDispatcher) {
   if e.c.AllowCredentials {
     e.w.Header().Set(AllowCredentialsHeader, "true")
   }
 }
 
-func applyAllowOrigin(e *event, ed *eventDispatcher) {
+func handleAllowOrigin(e *event, ed *eventDispatcher) {
   if e.c.AllowAllOrigin {
     e.w.Header().Add(VaryHeader, OriginHeader)
     e.w.Header().Set(AllowOriginHeader, "*")
@@ -67,7 +67,7 @@ func applyAllowOrigin(e *event, ed *eventDispatcher) {
   }
 }
 
-func applyAllowMethods(e *event, ed *eventDispatcher) {
+func handleAllowMethods(e *event, ed *eventDispatcher) {
   method := e.r.Header.Get(RequestMethodHeader)
 
   if !contains(strings.ToUpper(method), e.c.AllowMethods) {
@@ -89,7 +89,7 @@ func applyAllowMethods(e *event, ed *eventDispatcher) {
   e.w.Header().Set(AllowMethodsHeader, strings.Join(allowMethods, ", "))
 }
 
-func applyAllowHeaders(e *event, ed *eventDispatcher) {
+func handleAllowHeaders(e *event, ed *eventDispatcher) {
   e.w.Header().Add(VaryHeader, RequestHeadersHeader)
   requestHeaders := e.w.Header().Get(RequestHeadersHeader)
 

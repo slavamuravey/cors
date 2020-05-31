@@ -16,16 +16,16 @@ func CreateHandlerFunc(c Config) func(http.Handler) http.HandlerFunc {
 
       ed.addListener(corsRequestEvent, handleCorsRequest)
 
-      ed.addListener(preflightRequestEvent, applyAllowOrigin)
-      ed.addListener(preflightRequestEvent, applyAllowCredentials)
-      ed.addListener(preflightRequestEvent, applyAllowMethods)
-      ed.addListener(preflightRequestEvent, applyAllowHeaders)
-      ed.addListener(preflightRequestEvent, applyMaxAge)
-      ed.addListener(preflightRequestEvent, applyPreflightTermination)
+      ed.addListener(preflightRequestEvent, handleAllowOrigin)
+      ed.addListener(preflightRequestEvent, handleAllowCredentials)
+      ed.addListener(preflightRequestEvent, handleAllowMethods)
+      ed.addListener(preflightRequestEvent, handleAllowHeaders)
+      ed.addListener(preflightRequestEvent, handleMaxAge)
+      ed.addListener(preflightRequestEvent, handlePreflightTermination)
 
-      ed.addListener(simpleRequestEvent, applyAllowOrigin)
-      ed.addListener(simpleRequestEvent, applyAllowCredentials)
-      ed.addListener(simpleRequestEvent, applyExposedHeaders)
+      ed.addListener(simpleRequestEvent, handleAllowOrigin)
+      ed.addListener(simpleRequestEvent, handleAllowCredentials)
+      ed.addListener(simpleRequestEvent, handleExposedHeaders)
 
       ed.dispatch(newEvent(c, w, r), requestEvent)
     }

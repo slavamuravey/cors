@@ -7,27 +7,27 @@ import (
 func CreateHandlerFunc(c Config) func(http.Handler) http.HandlerFunc {
   return func(next http.Handler) http.HandlerFunc {
     return func(w http.ResponseWriter, r *http.Request) {
-      ed := NewEventDispatcher()
+      ed := newEventDispatcher()
 
-      ed.addListener(RequestEvent, CheckRequestIsCors)
-      ed.addListener(RequestEvent, func(e *Event, ed *EventDispatcher) {
+      ed.addListener(requestEvent, checkRequestIsCors)
+      ed.addListener(requestEvent, func(e *event, ed *eventDispatcher) {
         next.ServeHTTP(w, r)
       })
 
-      ed.addListener(CorsRequestEvent, HandleCorsRequest)
+      ed.addListener(corsRequestEvent, handleCorsRequest)
 
-      ed.addListener(PreflightRequestEvent, ApplyAllowOrigin)
-      ed.addListener(PreflightRequestEvent, ApplyAllowCredentials)
-      ed.addListener(PreflightRequestEvent, ApplyAllowMethods)
-      ed.addListener(PreflightRequestEvent, ApplyAllowHeaders)
-      ed.addListener(PreflightRequestEvent, ApplyMaxAge)
-      ed.addListener(PreflightRequestEvent, ApplyPreflightTermination)
+      ed.addListener(preflightRequestEvent, applyAllowOrigin)
+      ed.addListener(preflightRequestEvent, applyAllowCredentials)
+      ed.addListener(preflightRequestEvent, applyAllowMethods)
+      ed.addListener(preflightRequestEvent, applyAllowHeaders)
+      ed.addListener(preflightRequestEvent, applyMaxAge)
+      ed.addListener(preflightRequestEvent, applyPreflightTermination)
 
-      ed.addListener(SimpleRequestEvent, ApplyAllowOrigin)
-      ed.addListener(SimpleRequestEvent, ApplyAllowCredentials)
-      ed.addListener(SimpleRequestEvent, ApplyExposedHeaders)
+      ed.addListener(simpleRequestEvent, applyAllowOrigin)
+      ed.addListener(simpleRequestEvent, applyAllowCredentials)
+      ed.addListener(simpleRequestEvent, applyExposedHeaders)
 
-      ed.dispatch(NewEvent(c, w, r), RequestEvent)
+      ed.dispatch(newEvent(c, w, r), requestEvent)
     }
   }
 }

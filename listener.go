@@ -133,10 +133,7 @@ func handleRequest(e *event, ed *eventDispatcher) {
   e.w.Header().Add(VaryHeader, RequestMethodHeader)
   e.w.Header().Add(VaryHeader, RequestHeadersHeader)
 
-  origin := e.r.Header.Get(OriginHeader)
-  host := e.r.Host
-
-  if origin == "" || origin == "http://"+host || origin == "https://"+host {
+  if !isCorsRequest(e.r) {
     return
   }
 
@@ -146,6 +143,13 @@ func handleRequest(e *event, ed *eventDispatcher) {
   if corsEvent.isRequestTerminated() {
     e.stopPropagation()
   }
+}
+
+func isCorsRequest(r *http.Request) bool {
+  origin := r.Header.Get(OriginHeader)
+  host := r.Host
+
+  return origin == "" || origin == "http://"+host || origin == "https://"+host
 }
 
 func handleCorsRequest(e *event, ed *eventDispatcher) {

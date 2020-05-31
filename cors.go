@@ -9,7 +9,7 @@ func CreateHandlerFunc(c Config) func(http.Handler) http.HandlerFunc {
     return func(w http.ResponseWriter, r *http.Request) {
       ed := newEventDispatcher()
 
-      ed.addListener(requestEvent, checkRequestIsCors)
+      ed.addListener(requestEvent, handleRequest)
       ed.addListener(requestEvent, func(e *event, ed *eventDispatcher) {
         next.ServeHTTP(w, r)
       })

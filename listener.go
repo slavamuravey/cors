@@ -45,7 +45,6 @@ func handleAllowCredentials(e *event, ed *eventDispatcher) {
 
 func handleAllowOrigin(e *event, ed *eventDispatcher) {
   if e.c.AllowAllOrigin {
-    e.w.Header().Add(VaryHeader, OriginHeader)
     e.w.Header().Set(AllowOriginHeader, "*")
 
     return
@@ -69,7 +68,6 @@ func handleAllowOrigin(e *event, ed *eventDispatcher) {
   }
 
   if match {
-    e.w.Header().Add(VaryHeader, OriginHeader)
     e.w.Header().Set(AllowOriginHeader, origin)
   }
 }
@@ -92,12 +90,10 @@ func handleAllowMethods(e *event, ed *eventDispatcher) {
     allowMethods = append(allowMethods, method)
   }
 
-  e.w.Header().Add(VaryHeader, RequestMethodHeader)
   e.w.Header().Set(AllowMethodsHeader, strings.Join(allowMethods, ", "))
 }
 
 func handleAllowHeaders(e *event, ed *eventDispatcher) {
-  e.w.Header().Add(VaryHeader, RequestHeadersHeader)
   requestHeaders := e.w.Header().Get(RequestHeadersHeader)
 
   if len(e.c.AllowHeaders) > 0 {
@@ -132,7 +128,11 @@ func handleAllowHeaders(e *event, ed *eventDispatcher) {
   }
 }
 
-func checkRequestIsCors(e *event, ed *eventDispatcher) {
+func handleRequest(e *event, ed *eventDispatcher) {
+  e.w.Header().Add(VaryHeader, OriginHeader)
+  e.w.Header().Add(VaryHeader, RequestMethodHeader)
+  e.w.Header().Add(VaryHeader, RequestHeadersHeader)
+
   origin := e.r.Header.Get(OriginHeader)
   host := e.r.Host
 

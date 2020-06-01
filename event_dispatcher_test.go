@@ -4,7 +4,7 @@ import (
   "testing"
 )
 
-func TestDispatch(t *testing.T)  {
+func TestDispatch(t *testing.T) {
   ed := newEventDispatcher()
   var listenerInvoked bool
   ed.addListener("event", func(e *event, ed *eventDispatcher) {
@@ -13,10 +13,10 @@ func TestDispatch(t *testing.T)  {
 
   ed.dispatch(newEvent(nil, nil, nil), "event")
 
-  assertTrue(t, listenerInvoked, "listener must be invoked")
+  assertTrue(t, listenerInvoked, "Listener must be invoked")
 }
 
-func TestDispatchStopPropagation(t *testing.T)  {
+func TestDispatchStopPropagation(t *testing.T) {
   ed := newEventDispatcher()
   var listener1Invoked, listener2Invoked, listener3Invoked bool
 
@@ -35,7 +35,7 @@ func TestDispatchStopPropagation(t *testing.T)  {
 
   ed.dispatch(newEvent(nil, nil, nil), "event")
 
-  assertTrue(t, listener1Invoked, "listener must be invoked")
-  assertTrue(t, listener2Invoked, "listener must be invoked")
-  assertFalse(t, listener3Invoked, "listener mustn't be invoked")
+  assertTrue(t, listener1Invoked, "Listener must be invoked")
+  assertTrue(t, listener2Invoked, "Listener must be invoked")
+  assertFalse(t, listener3Invoked, "Listener mustn't be invoked")
 }

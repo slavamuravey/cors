@@ -10,14 +10,14 @@ const (
 )
 
 type event struct {
-  c                  Config
+  c                  *Config
   w                  http.ResponseWriter
   r                  *http.Request
   propagationStopped bool
   requestTerminated  bool
 }
 
-func newEvent(c Config, w http.ResponseWriter, r *http.Request) *event {
+func newEvent(c *Config, w http.ResponseWriter, r *http.Request) *event {
   e := new(event)
   e.c = c
   e.w = w

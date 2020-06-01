@@ -4,7 +4,7 @@ import (
   "net/http"
 )
 
-func CreateHandlerFunc(c Config) func(http.Handler) http.HandlerFunc {
+func CreateHandlerFunc(c *Config) func(http.Handler) http.HandlerFunc {
   return func(next http.Handler) http.HandlerFunc {
     return func(w http.ResponseWriter, r *http.Request) {
       ed := newEventDispatcher()

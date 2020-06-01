@@ -129,6 +129,9 @@ func handleAllowHeaders(e *event, ed *eventDispatcher) {
 }
 
 func handleRequest(e *event, ed *eventDispatcher) {
+  //If your server makes a decision about what to return based on a what’s in a HTTP header,
+  //you need to include that header name in your Vary, even if the request didn’t include that header.
+  //(https://textslashplain.com/2018/08/02/cors-and-vary/)
   e.w.Header().Add(VaryHeader, OriginHeader)
   e.w.Header().Add(VaryHeader, RequestMethodHeader)
   e.w.Header().Add(VaryHeader, RequestHeadersHeader)

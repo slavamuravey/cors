@@ -150,9 +150,8 @@ func handleRequest(e *event, ed *eventDispatcher) {
 
 func isCorsRequest(r *http.Request) bool {
   origin := r.Header.Get(OriginHeader)
-  host := r.Host
 
-  return !(origin == "" || origin == "http://"+host || origin == "https://"+host)
+  return origin != ""
 }
 
 func handleCorsRequest(e *event, ed *eventDispatcher) {

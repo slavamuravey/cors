@@ -1,4 +1,4 @@
-# Go CORS middleware [![godoc](http://img.shields.io/badge/godoc-reference-blue.svg?style=flat)](https://godoc.org/github.com/slavamuravey/cors) [![license](http://img.shields.io/badge/license-MIT-red.svg?style=flat)](https://raw.githubusercontent.com/slavamuravey/cors/master/LICENSE) [![build](https://img.shields.io/travis/slavamuravey/cors.svg?style=flat)](https://travis-ci.org/slavamuravey/cors)
+# Go CORS middleware [![godoc](http://img.shields.io/badge/godoc-reference-blue.svg?style=flat)](https://godoc.org/github.com/slavamuravey/cors) [![license](http://img.shields.io/badge/license-MIT-red.svg?style=flat)](https://raw.githubusercontent.com/slavamuravey/cors/master/LICENSE) [![build](https://img.shields.io/travis/slavamuravey/cors.svg?style=flat)](https://travis-ci.org/slavamuravey/cors) [![Coverage](http://gocover.io/_badge/github.com/slavamuravey/cors)](http://gocover.io/github.com/slavamuravey/cors)
 
 <p align="center">
   <a href="https://nodejs.org/">

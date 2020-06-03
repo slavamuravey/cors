@@ -2,9 +2,8 @@ package cors
 
 import (
   "fmt"
-  "path/filepath"
   "reflect"
-  "runtime"
+  "runtime/debug"
   "testing"
 )
 
@@ -37,10 +36,10 @@ func assertFalse(t *testing.T, condition bool, msg string) {
 
 // fail fails the test and prints place of error and error message
 func fail(t *testing.T, msg string, want, got interface{}) {
-  _, file, line, _ := runtime.Caller(2)
   fmt.Printf(
-    "%s:%d %s\n want: %#v\n got: %#v\n",
-    filepath.Base(file), line, msg, want, got,
+    "%s\n want: %#v\n got: %#v\n",
+    msg, want, got,
   )
+  fmt.Println(string(debug.Stack()))
   t.FailNow()
 }

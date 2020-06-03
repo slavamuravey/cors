@@ -1,7 +1,18 @@
 language: go
+
 go:
   - "1.13"
   - tip
+  -
 matrix:
   allow_failures:
     - go: tip
+
+before_install:
+  - go get -t -v ./...
+
+script:
+  - go test -race -coverprofile=coverage.txt -covermode=atomic
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash) -t 6178caca-4802-4bc3-81a5-aaf3c8284a96

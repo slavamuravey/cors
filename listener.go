@@ -95,19 +95,17 @@ func handleAllowMethods(e *event, ed *eventDispatcher) {
 }
 
 func handleAllowHeaders(e *event, ed *eventDispatcher) {
-  requestHeaders := e.w.Header().Get(RequestHeadersHeader)
+  requestHeaders := e.r.Header.Get(RequestHeadersHeader)
 
-  if len(e.c.AllowHeaders) > 0 {
-    var headers string
-    if e.c.AllowAllHeaders {
-      headers = requestHeaders
-    } else {
-      headers = strings.Join(e.c.AllowHeaders, ",")
-    }
+  var headers string
+  if e.c.AllowAllHeaders {
+    headers = requestHeaders
+  } else {
+    headers = strings.Join(e.c.AllowHeaders, ",")
+  }
 
-    if headers != "" {
-      e.w.Header().Set(AllowHeadersHeader, headers)
-    }
+  if headers != "" {
+    e.w.Header().Set(AllowHeadersHeader, headers)
   }
 
   if requestHeaders != "" && !e.c.AllowAllHeaders {

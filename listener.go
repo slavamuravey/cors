@@ -61,6 +61,7 @@ func handleAllowOrigin(e *event, ed *eventDispatcher) {
 
   if err != nil {
     e.w.WriteHeader(http.StatusInternalServerError)
+    e.w.Write([]byte("Origin header validation error: " + err.Error()))
     e.stopPropagation()
     e.terminateRequest()
 

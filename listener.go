@@ -27,7 +27,7 @@ func handlePreflightTermination(e *event, ed *eventDispatcher) {
 
 func handleExposedHeaders(e *event, ed *eventDispatcher) {
   if len(e.c.ExposedHeaders) > 0 {
-    e.w.Header().Set(ExposeHeadersHeader, strings.Join(e.c.ExposedHeaders, ", "))
+    e.w.Header().Set(ExposeHeadersHeader, strings.Join(e.c.ExposedHeaders, ","))
   }
 }
 
@@ -91,7 +91,7 @@ func handleAllowMethods(e *event, ed *eventDispatcher) {
     allowMethods = append(allowMethods, method)
   }
 
-  e.w.Header().Set(AllowMethodsHeader, strings.Join(allowMethods, ", "))
+  e.w.Header().Set(AllowMethodsHeader, strings.Join(allowMethods, ","))
 }
 
 func handleAllowHeaders(e *event, ed *eventDispatcher) {
@@ -102,7 +102,7 @@ func handleAllowHeaders(e *event, ed *eventDispatcher) {
     if e.c.AllowAllHeaders {
       headers = requestHeaders
     } else {
-      headers = strings.Join(e.c.AllowHeaders, ", ")
+      headers = strings.Join(e.c.AllowHeaders, ",")
     }
 
     if headers != "" {

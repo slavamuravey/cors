@@ -67,5 +67,5 @@ func testTestCase(t *testing.T, tc *testCase) {
   hf(res, req)
 
   assertEquals(t, tc.resHeaders, res.Header(), "Headers must be equals")
-  assertEquals(t, tc.statusCode, 200, "Status code must be equals")
+  assertEquals(t, tc.statusCode, res.Code, "Status code must be equals")
 }

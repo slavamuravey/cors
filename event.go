@@ -3,7 +3,7 @@ package cors
 import "net/http"
 
 const (
-  corsRequestEvent = string(iota)
+  corsRequestEvent = string(rune(iota))
   preflightRequestEvent
   requestEvent
   simpleRequestEvent

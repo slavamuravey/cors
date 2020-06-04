@@ -14,7 +14,28 @@ type testCase struct {
   statusCode int
 }
 
-func TestEmptyAllowOrigin(t *testing.T) {
+func TestNotCorsRequest(t *testing.T) {
+  testTestCase(t, &testCase{
+    config: &Config{
+    },
+    method: "GET",
+    reqHeaders: http.Header{
+      "Origin": []string{
+        "http://example.com",
+      },
+    },
+    resHeaders: http.Header{
+      "Vary": []string{
+        "Origin",
+        "Access-Control-Request-Method",
+        "Access-Control-Request-Headers",
+      },
+    },
+    statusCode: 200,
+  })
+}
+
+func TestSimpleEmptyAllowOrigin(t *testing.T) {
   testTestCase(t, &testCase{
     config: &Config{
       AllowOriginPattern: "",
@@ -36,7 +57,7 @@ func TestEmptyAllowOrigin(t *testing.T) {
   })
 }
 
-func TestAllowAllOrigin(t *testing.T) {
+func TestSimpleAllowAllOrigin(t *testing.T) {
   testTestCase(t, &testCase{
     config: &Config{
       AllowAllOrigin: true,
@@ -59,28 +80,7 @@ func TestAllowAllOrigin(t *testing.T) {
   })
 }
 
-func TestNotCorsRequest(t *testing.T) {
-  testTestCase(t, &testCase{
-    config: &Config{
-    },
-    method: "GET",
-    reqHeaders: http.Header{
-      "Origin": []string{
-        "http://example.com",
-      },
-    },
-    resHeaders: http.Header{
-      "Vary": []string{
-        "Origin",
-        "Access-Control-Request-Method",
-        "Access-Control-Request-Headers",
-      },
-    },
-    statusCode: 200,
-  })
-}
-
-func TestAllowConcreteOrigin(t *testing.T) {
+func TestSimpleAllowConcreteOrigin(t *testing.T) {
   testTestCase(t, &testCase{
     config: &Config{
       AllowOriginPattern: "^http://foo.example.com$",
@@ -103,7 +103,7 @@ func TestAllowConcreteOrigin(t *testing.T) {
   })
 }
 
-func TestCantParseOrigin(t *testing.T) {
+func TestSimpleCantParseOrigin(t *testing.T) {
   testTestCase(t, &testCase{
     config: &Config{
       AllowOriginPattern: string([]byte{227}),
@@ -125,7 +125,7 @@ func TestCantParseOrigin(t *testing.T) {
   })
 }
 
-func TestExposeHeadersAllowCredentials(t *testing.T) {
+func TestSimpleExposeHeadersAllowCredentials(t *testing.T) {
   testTestCase(t, &testCase{
     config: &Config{
       AllowAllOrigin:   true,
@@ -149,6 +149,112 @@ func TestExposeHeadersAllowCredentials(t *testing.T) {
       "Access-Control-Expose-Headers":    []string{"Header1,Header2"},
     },
     statusCode: 200,
+  })
+}
+
+func TestPreflightAllowConcreteOrigin(t *testing.T) {
+  testTestCase(t, &testCase{
+    config: &Config{
+      AllowOriginPattern: "^http://foo.example.com$",
+    },
+    method: "OPTIONS",
+    reqHeaders: http.Header{
+      "Origin": []string{
+        "http://foo.example.com",
+      },
+      "Access-Control-Request-Method": []string{
+        "DELETE",
+      },
+    },
+    resHeaders: http.Header{
+      "Vary": []string{
+        "Origin",
+        "Access-Control-Request-Method",
+        "Access-Control-Request-Headers",
+      },
+      "Access-Control-Allow-Origin": []string{"http://foo.example.com"},
+    },
+    statusCode: 405,
+  })
+}
+
+func TestPreflightAllowCredentials(t *testing.T) {
+  testTestCase(t, &testCase{
+    config: &Config{
+      AllowAllOrigin:   true,
+      AllowCredentials: true,
+      AllowMethods:     []string{"DELETE"},
+    },
+    method: "OPTIONS",
+    reqHeaders: http.Header{
+      "Origin": []string{
+        "http://foo.example.com",
+      },
+      "Access-Control-Request-Method": []string{
+        "DELETE",
+      },
+    },
+    resHeaders: http.Header{
+      "Vary": []string{
+        "Origin",
+        "Access-Control-Request-Method",
+        "Access-Control-Request-Headers",
+      },
+      "Access-Control-Allow-Origin":      []string{"*"},
+      "Access-Control-Allow-Credentials": []string{"true"},
+      "Access-Control-Allow-Methods":     []string{"DELETE"},
+    },
+    statusCode: 200,
+  })
+}
+
+func TestPreflightEmptyAllowOrigin(t *testing.T) {
+  testTestCase(t, &testCase{
+    config: &Config{
+      AllowOriginPattern: "",
+    },
+    method: "OPTIONS",
+    reqHeaders: http.Header{
+      "Origin": []string{
+        "http://foo.example.com",
+      },
+      "Access-Control-Request-Method": []string{
+        "DELETE",
+      },
+    },
+    resHeaders: http.Header{
+      "Vary": []string{
+        "Origin",
+        "Access-Control-Request-Method",
+        "Access-Control-Request-Headers",
+      },
+    },
+    statusCode: 200,
+  })
+}
+
+func TestPreflightCantParseOrigin(t *testing.T) {
+  testTestCase(t, &testCase{
+    config: &Config{
+      AllowOriginPattern: string([]byte{227}),
+    },
+    method: "OPTIONS",
+    reqHeaders: http.Header{
+      "Origin": []string{
+        "http://foo.example.com",
+      },
+      "Access-Control-Request-Method": []string{
+        "DELETE",
+      },
+    },
+    resHeaders: http.Header{
+      "Vary": []string{
+        "Origin",
+        "Access-Control-Request-Method",
+        "Access-Control-Request-Headers",
+      },
+    },
+    statusCode: 500,
   })
 }
 
@@ -238,7 +344,7 @@ func TestPreflightTerminationStatus(t *testing.T) {
   })
 }
 
-func TestContinuousPreflight(t *testing.T) {
+func TestPreflightContinuous(t *testing.T) {
   var nextFuncInvoked bool
   nextFunc := func(w http.ResponseWriter, r *http.Request) {
     nextFuncInvoked = true
@@ -263,7 +369,7 @@ func TestContinuousPreflight(t *testing.T) {
   assertTrue(t, nextFuncInvoked, "Next function must be invoked")
 }
 
-func TestNotContinuousPreflight(t *testing.T) {
+func TestPreflightNotContinuous(t *testing.T) {
   var nextFuncInvoked bool
   nextFunc := func(w http.ResponseWriter, r *http.Request) {
     nextFuncInvoked = true
@@ -288,7 +394,7 @@ func TestNotContinuousPreflight(t *testing.T) {
   assertFalse(t, nextFuncInvoked, "Next function mustn't be invoked")
 }
 
-func TestAllowHeadersFailure(t *testing.T) {
+func TestPreflightAllowHeadersFailure(t *testing.T) {
   testTestCase(t, &testCase{
     config: &Config{
       AllowAllOrigin: true,
@@ -321,7 +427,7 @@ func TestAllowHeadersFailure(t *testing.T) {
   })
 }
 
-func TestAllowHeadersSuccess(t *testing.T) {
+func TestPreflightAllowHeadersSuccess(t *testing.T) {
   testTestCase(t, &testCase{
     config: &Config{
       AllowAllOrigin: true,
@@ -354,7 +460,7 @@ func TestAllowHeadersSuccess(t *testing.T) {
   })
 }
 
-func TestAllowAllHeaders(t *testing.T) {
+func TestPreflightAllowAllHeaders(t *testing.T) {
   testTestCase(t, &testCase{
     config: &Config{
       AllowAllOrigin:  true,

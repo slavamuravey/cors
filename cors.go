@@ -7,7 +7,10 @@ import (
   "strings"
 )
 
-func CreateHandlerFunc(c *Config) func(http.Handler) http.HandlerFunc {
+// CreateMiddleware returns middleware for using in client's code based on configuration. Middleware is function that
+// receives http.Handler interface and returns http.HandlerFunc function, that implements http.Handler interface.
+// You can pass this function as http.HandlerFunc into http.HandleFunc. And you can pass it into http.ListenAndServe.
+func CreateMiddleware(c *Config) func(http.Handler) http.HandlerFunc {
   return func(next http.Handler) http.HandlerFunc {
     return func(w http.ResponseWriter, r *http.Request) {
       // If your server makes a decision about what to return based on a what’s in a HTTP header,
@@ -28,6 +31,7 @@ func CreateHandlerFunc(c *Config) func(http.Handler) http.HandlerFunc {
   }
 }
 
+// handlePreflightRequest handles simple cross-origin request
 func handleSimpleRequest(c *Config, w http.ResponseWriter, r *http.Request, next http.Handler) {
   if c.AllowAllOrigin {
     w.Header().Set(AllowOriginHeader, "*")
@@ -62,6 +66,7 @@ func handleSimpleRequest(c *Config, w http.ResponseWriter, r *http.Request, next
   next.ServeHTTP(w, r)
 }
 
+// handlePreflightRequest handles preflight cross-origin request
 func handlePreflightRequest(c *Config, w http.ResponseWriter, r *http.Request, next http.Handler) {
   if c.AllowAllOrigin {
     w.Header().Set(AllowOriginHeader, "*")
@@ -155,6 +160,7 @@ func handlePreflightRequest(c *Config, w http.ResponseWriter, r *http.Request, n
   next.ServeHTTP(w, r)
 }
 
+// isCorsRequest checks if request is CORS
 func isCorsRequest(r *http.Request) bool {
   origin := r.Header.Get(OriginHeader)
   host := r.Host
@@ -162,6 +168,7 @@ func isCorsRequest(r *http.Request) bool {
   return !(origin == "" || origin == "http://"+host || origin == "https://"+host)
 }
 
+// isPreflightRequest checks if request is preflight
 func isPreflightRequest(r *http.Request) bool {
   return r.Method == http.MethodOptions && r.Header.Get(RequestMethodHeader) != ""
 }

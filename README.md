@@ -9,4 +9,4 @@
   </a>
 </p>
 
-The middleware for Golang http server to support CORS.
+This package provides middleware for Golang http server to support CORS requests.

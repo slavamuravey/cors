@@ -10,9 +10,9 @@ import (
 func CreateHandlerFunc(c *Config) func(http.Handler) http.HandlerFunc {
   return func(next http.Handler) http.HandlerFunc {
     return func(w http.ResponseWriter, r *http.Request) {
-      //If your server makes a decision about what to return based on a what’s in a HTTP header,
-      //you need to include that header name in your Vary, even if the request didn’t include that header.
-      //(https://textslashplain.com/2018/08/02/cors-and-vary/)
+      // If your server makes a decision about what to return based on a what’s in a HTTP header,
+      // you need to include that header name in your Vary, even if the request didn’t include that header.
+      // (https://textslashplain.com/2018/08/02/cors-and-vary/)
       w.Header().Add(VaryHeader, OriginHeader)
       w.Header().Add(VaryHeader, RequestMethodHeader)
       w.Header().Add(VaryHeader, RequestHeadersHeader)

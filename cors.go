@@ -31,7 +31,7 @@ func CreateMiddleware(c *Config) func(http.Handler) http.HandlerFunc {
   }
 }
 
-// handlePreflightRequest handles simple cross-origin request
+// handleSimpleRequest handles simple cross-origin request
 func handleSimpleRequest(c *Config, w http.ResponseWriter, r *http.Request, next http.Handler) {
   if c.AllowAllOrigin {
     w.Header().Set(AllowOriginHeader, "*")

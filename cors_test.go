@@ -349,7 +349,7 @@ func TestPreflightContinuous(t *testing.T) {
   nextFunc := func(w http.ResponseWriter, r *http.Request) {
     nextFuncInvoked = true
   }
-  hf := CreateHandlerFunc(&Config{
+  hf := CreateMiddleware(&Config{
     AllowAllOrigin:      true,
     AllowMethods:        []string{"PUT"},
     ContinuousPreflight: true,
@@ -374,7 +374,7 @@ func TestPreflightNotContinuous(t *testing.T) {
   nextFunc := func(w http.ResponseWriter, r *http.Request) {
     nextFuncInvoked = true
   }
-  hf := CreateHandlerFunc(&Config{
+  hf := CreateMiddleware(&Config{
     AllowAllOrigin:      true,
     AllowMethods:        []string{"PUT"},
     ContinuousPreflight: false,
@@ -495,7 +495,7 @@ func TestPreflightAllowAllHeaders(t *testing.T) {
 }
 
 func testTestCase(t *testing.T, tc *testCase) {
-  hf := CreateHandlerFunc(tc.config)(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {}))
+  hf := CreateMiddleware(tc.config)(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {}))
   res := httptest.NewRecorder()
   req, _ := http.NewRequest(tc.method, "http://example.com/foo", nil)
   req.Header = tc.reqHeaders

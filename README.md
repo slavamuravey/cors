@@ -104,7 +104,7 @@ Date: Fri, 05 Jun 2020 11:52:18 GMT
 Content-Length: 28
 Content-Type: text/plain; charset=utf-8
 
-I am handler in your projec
+I am handler in your project
 
 $ curl -XDELETE -D - -H 'Origin: http://localhost:80' http://localhost:8080/nocors
 HTTP/1.1 200 OK

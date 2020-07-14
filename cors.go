@@ -90,16 +90,16 @@ func handlePreflightRequest(c *Config, w http.ResponseWriter, r *http.Request, n
     return
   }
 
-  if c.AllowCredentials {
-    w.Header().Set(AllowCredentialsHeader, "true")
-  }
-
   method := r.Header.Get(RequestMethodHeader)
 
   if !contains(strings.ToUpper(method), c.AllowMethods) {
     w.WriteHeader(http.StatusMethodNotAllowed)
 
     return
+  }
+
+  if c.AllowCredentials {
+    w.Header().Set(AllowCredentialsHeader, "true")
   }
 
   allowMethods := c.AllowMethods
@@ -109,20 +109,7 @@ func handlePreflightRequest(c *Config, w http.ResponseWriter, r *http.Request, n
     allowMethods = append(allowMethods, method)
   }
 
-  w.Header().Set(AllowMethodsHeader, strings.Join(allowMethods, ","))
-
   requestHeaders := r.Header.Get(RequestHeadersHeader)
-
-  var headers string
-  if c.AllowAllHeaders {
-    headers = requestHeaders
-  } else {
-    headers = strings.Join(c.AllowHeaders, ",")
-  }
-
-  if headers != "" {
-    w.Header().Set(AllowHeadersHeader, headers)
-  }
 
   if requestHeaders != "" && !c.AllowAllHeaders {
     r := regexp.MustCompile(` *, *`)
@@ -138,6 +125,19 @@ func handlePreflightRequest(c *Config, w http.ResponseWriter, r *http.Request, n
         return
       }
     }
+  }
+
+  w.Header().Set(AllowMethodsHeader, strings.Join(allowMethods, ","))
+
+  var headers string
+  if c.AllowAllHeaders {
+    headers = requestHeaders
+  } else {
+    headers = strings.Join(c.AllowHeaders, ",")
+  }
+
+  if headers != "" {
+    w.Header().Set(AllowHeadersHeader, headers)
   }
 
   if c.MaxAge > 0 {

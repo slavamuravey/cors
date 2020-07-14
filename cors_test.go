@@ -420,8 +420,6 @@ func TestPreflightAllowHeadersFailure(t *testing.T) {
         "Access-Control-Request-Headers",
       },
       "Access-Control-Allow-Origin":  []string{"*"},
-      "Access-Control-Allow-Methods": []string{"PUT"},
-      "Access-Control-Allow-Headers": []string{"Header1,Header2"},
     },
     statusCode: 400,
   })
